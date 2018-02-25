@@ -66,6 +66,6 @@ class ModelExtensionPaymentBrainblocks extends Model
 
     public function removeNoResponses($order_id)
     {
-        $this->db->query("DELETE FROM `brainblocks_no_response` WHERE `order_id` = '" . (int)$order_id . "'");
+        $this->db->query("DELETE FROM `" . DB_PREFIX . "brainblocks_no_response` WHERE `order_id` = '" . (int)$order_id . "'");
     }
 }
