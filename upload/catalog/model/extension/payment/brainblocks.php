@@ -1,6 +1,9 @@
 <?php
-class ModelExtensionPaymentBrainblocks extends Model {
-	public function getMethod($address, $total) {
+
+class ModelExtensionPaymentBrainblocks extends Model
+{
+	public function getMethod($address, $total)
+    {
 		$this->load->language('extension/payment/brainblocks');
 
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "zone_to_geo_zone WHERE geo_zone_id = '" . (int)$this->config->get('payment_brainblocks_geo_zone_id') . "' AND country_id = '" . (int)$address['country_id'] . "' AND (zone_id = '" . (int)$address['zone_id'] . "' OR zone_id = '0')");
@@ -49,5 +52,10 @@ class ModelExtensionPaymentBrainblocks extends Model {
     public function addToken($order_id, $token)
     {
         $this->db->query("INSERT INTO `" . DB_PREFIX . "brainblocks_tokens` SET `token` = '" . $this->db->escape($token) . "', `order_id` = '" . (int)$order_id . "', `date_added` = NOW()");
+    }
+
+    public function addResponse($order_id, $response)
+    {
+        $this->db->query("INSERT INTO `" . DB_PREFIX . "brainblocks_response` SET `response` = '" . $this->db->escape($response) . "', `order_id` = '" . (int)$order_id . "', `date_added` = NOW()");
     }
 }

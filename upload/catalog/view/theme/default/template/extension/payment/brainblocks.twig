@@ -1,0 +1,30 @@
+<div id="raiblocks-button" class="pull-right"></div>
+
+<script type="text/javascript">
+    $.getScript('https://brainblocks.io/brainblocks.min.js', function (data, textStatus, jqxhr) {
+        brainblocks.Button.render({
+          payment: {
+              destination: '{{ address }}',
+              currency:    '{{ currency }}',
+              amount:      '{{ amount }}'
+          },
+          onPayment: function(data) {
+              $.ajax({
+                  url: 'index.php?route=extension/payment/brainblocks/confirm',
+                  type: 'post',
+                  data: data,
+                  dataType: 'json',
+                  success: function(json) {
+                      if (json.redirect) {
+                          location = json.redirect;
+                      }
+                  },
+                  error: function(xhr, ajaxOptions, thrownError) {
+                      alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                  }
+              });
+          }
+
+        }, '#raiblocks-button');
+    });
+</script>

@@ -35,14 +35,27 @@ class ControllerExtensionPaymentBrainblocks extends Controller
 
 	public function confirm()
     {
-        if (!isset($this->request->post['token']) || !isset($this->session->data['order_id'])) {
+        $order_id = null;
+
+        // Get order_id either by customers session, or passed in bby an admin call
+        $this->user = new Cart\User($this->registry);
+
+        if ($this->user->isLogged() &&
+            $this->user->hasPermission('modify', 'sale/order') &&
+            isset($this->request->post['order_id'])) {
+            $order_id = $this->request->post['order_id'];
+        } elseif (isset($this->session->data['order_id'])) {
+            $order_id = $this->session->data['order_id'];
+        }
+
+        if (!isset($this->request->post['token']) || !$order_id) {
             return false;
         }
 
         $this->load->model('checkout/order');
         $this->load->model('extension/payment/brainblocks');
 
-        $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+        $order_info = $this->model_checkout_order->getOrder($order_id);
 
         if (!$order_info) {
             return false;
@@ -62,6 +75,12 @@ class ControllerExtensionPaymentBrainblocks extends Controller
             ]);
 
             if ($response->getBody()) {
+                // Save the response for debugging purposes
+                $this->model_extension_payment_brainblocks->addResponse(
+                    $order_info['order_id'],
+                    (string)$response->getBody()
+                );
+
                 $jsonResponse = json_decode($response->getBody());
 
                 $validTransaction = $this->validateTransaction(
@@ -107,6 +126,8 @@ class ControllerExtensionPaymentBrainblocks extends Controller
         } else {
             $redirect = $this->url->link('checkout/success');
         }
+
+        die();
 
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode(array(

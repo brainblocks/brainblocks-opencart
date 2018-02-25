@@ -1,8 +1,11 @@
 <?php
-class ControllerExtensionPaymentBrainblocks extends Controller {
+
+class ControllerExtensionPaymentBrainblocks extends Controller
+{
 	private $error = array();
 
-	public function index() {
+	public function index()
+    {
 		$this->load->language('extension/payment/brainblocks');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -106,6 +109,29 @@ class ControllerExtensionPaymentBrainblocks extends Controller {
 
 		$this->response->setOutput($this->load->view('extension/payment/brainblocks', $data));
 	}
+
+    public function order()
+    {
+        $this->load->model('extension/payment/brainblocks');
+
+        $data = array();
+
+        $results = $this->model_extension_payment_brainblocks->getResponses($this->request->get['order_id']);
+
+        $data['responses'] = array();
+
+        foreach ($results as $result) {
+            $data['responses'][] = array(
+                'date' => date($this->language->get('datetime_format'), strtotime($result['date_added'])),
+                'rows' => json_decode($result['response'], true)
+            );
+        }
+
+        $data['order_id'] = $this->request->get['order_id'];
+        $data['token'] = '';
+
+        return $this->load->view('extension/payment/brainblocks_order', $data);
+    }
 
     public function install() {
         if ($this->user->hasPermission('modify', 'marketplace/extension')) {
