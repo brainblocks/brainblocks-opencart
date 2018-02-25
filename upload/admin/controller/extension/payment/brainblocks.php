@@ -127,8 +127,19 @@ class ControllerExtensionPaymentBrainblocks extends Controller
             );
         }
 
-        $data['order_id'] = $this->request->get['order_id'];
+        $data['retry_brainblocks'] = false;
         $data['token'] = '';
+
+        $no_response = $this->model_extension_payment_brainblocks->getNoResponse($this->request->get['order_id']);
+
+        if ($no_response) {
+            $data['retry_brainblocks'] = true;
+            $data['token'] = $no_response['token'];
+        }
+
+        $data['order_id'] = $this->request->get['order_id'];
+
+        $data['catalog'] = $this->request->server['HTTPS'] ? HTTPS_CATALOG : HTTP_CATALOG;
 
         return $this->load->view('extension/payment/brainblocks_order', $data);
     }

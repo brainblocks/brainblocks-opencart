@@ -58,4 +58,14 @@ class ModelExtensionPaymentBrainblocks extends Model
     {
         $this->db->query("INSERT INTO `" . DB_PREFIX . "brainblocks_response` SET `response` = '" . $this->db->escape($response) . "', `order_id` = '" . (int)$order_id . "', `date_added` = NOW()");
     }
+
+    public function addNoResponse($order_id, $token)
+    {
+        $this->db->query("INSERT INTO `" . DB_PREFIX . "brainblocks_no_response` SET `token` = '" . $this->db->escape($token) . "', `order_id` = '" . (int)$order_id . "', `date_added` = NOW()");
+    }
+
+    public function removeNoResponses($order_id)
+    {
+        $this->db->query("DELETE FROM `brainblocks_no_response` WHERE `order_id` = '" . (int)$order_id . "'");
+    }
 }

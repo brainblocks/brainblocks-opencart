@@ -37,7 +37,7 @@ class ControllerExtensionPaymentBrainblocks extends Controller
     {
         $order_id = null;
 
-        // Get order_id either by customers session, or passed in bby an admin call
+        // Get order_id either by customers session, or passed in by an admin call
         $this->user = new Cart\User($this->registry);
 
         if ($this->user->isLogged() &&
@@ -99,6 +99,8 @@ class ControllerExtensionPaymentBrainblocks extends Controller
                     // Add token to DB to prevent re-use
                     $this->model_extension_payment_brainblocks->addToken($order_info['order_id'], $jsonResponse->token);
 
+                    $this->model_extension_payment_brainblocks->removeNoResponses($order_info['order_id']);
+
                     $success = true;
                 }
             }
@@ -116,6 +118,9 @@ class ControllerExtensionPaymentBrainblocks extends Controller
                 )
             );
 
+            // Add a no response token so we can try to verify later in the admin area
+            $this->model_extension_payment_brainblocks->addNoResponse($order_info['order_id'], $this->request->post['token']);
+
             $this->log($e->getMessage());
         } catch (\Exception $e) {
             $this->log($e->getMessage());
@@ -126,8 +131,6 @@ class ControllerExtensionPaymentBrainblocks extends Controller
         } else {
             $redirect = $this->url->link('checkout/success');
         }
-
-        die();
 
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode(array(

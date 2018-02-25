@@ -1,4 +1,7 @@
+{% if retry_brainblocks %}
 <a class="btn btn-primary brainblocks-request">Re-try Brainblocks</a>
+{% endif %}
+{% if responses %}
 <h4>Brainblocks responses</h4>
 {% for response in responses %}
 <div class="table-responsive">
@@ -19,17 +22,19 @@
   </table>
 </div>
 {% endfor %}
+{% endif %}
+{% if retry_brainblocks %}
 <script type="text/javascript">
     $('.brainblocks-request').on('click', function(e) {
         e.preventDefault();
 
         var data = {
-            order_id: '',
-            token: ''
+            order_id: '{{ order_id }}',
+            token: '{{ token }}'
         };
 
         $.ajax({
-            url: 'index.php?route=extension/payment/brainblocks/confirm',
+            url: '{{ catalog }}index.php?route=extension/payment/brainblocks/confirm',
             type: 'post',
             data: data,
             dataType: 'json',
@@ -42,5 +47,6 @@
                 alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
             }
         });
-    };
+    });
 </script>
+{% endif %}
