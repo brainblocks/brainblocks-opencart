@@ -1,0 +1,50 @@
+{% if retry_brainblocks %}
+<a class="btn btn-primary brainblocks-request">Re-try Brainblocks</a>
+{% endif %}
+{% if responses %}
+<h4>Brainblocks responses</h4>
+{% for response in responses %}
+<div class="table-responsive">
+  <table class="table table-bordered">
+    <thead>
+    <tr>
+      <td colspan="2">{{ response.date }}</td>
+    </tr>
+    </thead>
+    <tbody>
+    {% for key, value in response.rows %}
+    <tr>
+      <td>{{ key }}</td>
+      <td>{{ value }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endfor %}
+{% endif %}
+{% if retry_brainblocks %}
+<script type="text/javascript">
+    $('.brainblocks-request').on('click', function(e) {
+        e.preventDefault();
+
+        var data = {
+            order_id: '{{ order_id }}',
+            token: '{{ token }}'
+        };
+
+        $.ajax({
+            url: '{{ catalog }}index.php?route=extension/payment/brainblocks/confirm',
+            type: 'post',
+            data: data,
+            dataType: 'json',
+            success: function (json) {
+                location.reload();
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+    });
+</script>
+{% endif %}
