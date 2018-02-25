@@ -5,7 +5,7 @@ use GuzzleHttp\Exception\RequestException;
 
 class ControllerExtensionPaymentBrainblocks extends Controller
 {
-	public function index()
+    public function index()
     {
         if (!isset($this->session->data['order_id']) || !$this->session->data['order_id']) {
             return false;
@@ -26,14 +26,14 @@ class ControllerExtensionPaymentBrainblocks extends Controller
             false
         );
 
-		return $this->load->view('extension/payment/brainblocks', array(
-		    'amount'   => $amount,
+        return $this->load->view('extension/payment/brainblocks', array(
+            'amount'   => $amount,
             'currency' => strtolower($order_info['currency_code']),
             'address'  => $this->config->get('payment_brainblocks_address')
         ));
-	}
+    }
 
-	public function confirm()
+    public function confirm()
     {
         $order_id = null;
 
