@@ -1,1 +1,1 @@
-# opencart-brainblocks
+# Brainblocks for OpenCart
